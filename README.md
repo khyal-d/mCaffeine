@@ -3,22 +3,22 @@
 ### Developed by **Khyal Deware**
 
 A complete Python-based command-line tool that automates syncing Shopify products from Excel/CSV using the **Shopify Admin GraphQL API (2025-10)**.  
-It supports product creation, updates, variant syncing, image uploads, rate-limit recovery, and strict GraphQL mutation compliance.
+It supports product creation, updates, variant syncing, image uploads, rate-limit handling, and strict GraphQL mutation compliance.
 
 ---
 
 ## 🚀 Features
 
 - End-to-end product sync via Shopify GraphQL Admin API  
-- Safely creates or updates products  
-- Prevents duplicate variants or images  
+- Automatically creates or updates products  
+- Prevents duplicate variants and images  
 - Reads **.xlsx** and **.csv** files  
-- Supports Title, Description, Type, Vendor, Tags, SKU, Price, Image URL  
-- Smart variant matching (by SKU)  
-- Uses `productVariantsBulkUpdate` for API correctness  
-- Automatic retry on 429 rate-limit & Shopify server errors  
-- `--dry-run` mode for safe previews  
-- Modular, production-ready Python architecture  
+- Supports Title, Description, Vendor, Tags, SKU, Price, Image URL  
+- Smart variant matching via SKU  
+- Uses `productVariantsBulkUpdate` for strict mutation updates  
+- Automatic retry on 429 rate-limit and Shopify 5xx errors  
+- `--dry-run` mode to preview actions  
+- Clean, modular Python architecture  
 
 ---
 
@@ -28,7 +28,7 @@ It supports product creation, updates, variant syncing, image uploads, rate-limi
 |----------|------------|
 | Language | Python 3.10+ |
 | API | Shopify Admin GraphQL API (2025-10) |
-| Data Processing | pandas + openpyxl |
+| Data Processing | pandas, openpyxl |
 | Networking | requests |
 | Env Management | python-dotenv |
 
@@ -52,7 +52,7 @@ SHOPIFY_ADMIN_TOKEN=shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 SHOPIFY_API_VERSION=2025-10
 ```
 
-Example:
+Example used:
 
 ```
 SHOPIFY_SHOP=khyaldeware21je0471
@@ -62,20 +62,18 @@ SHOPIFY_SHOP=khyaldeware21je0471
 
 ## 📂 Input File Format
 
-Your Excel/CSV file must contain:
-
-| Column                 | Description          |
-| ---------------------- | -------------------- |
-| Handle                 | Shopify handle       |
-| Title                  | Product title        |
-| Body (HTML)            | Product description  |
-| Type                   | Product type         |
-| Vendor                 | Vendor/brand         |
-| Tags                   | Comma-separated tags |
-| Variant SKU            | Variant SKU          |
-| Variant Price          | Variant price        |
-| Option1 Value          | Variant option       |
-| Image Src *(optional)* | Public image URL     |
+| Column        | Description                 |
+| ------------- | --------------------------- |
+| Handle        | Unique Shopify handle       |
+| Title         | Product title               |
+| Body (HTML)   | Product description         |
+| Type          | Product type                |
+| Vendor        | Vendor name                 |
+| Tags          | Comma-separated tags        |
+| Variant SKU   | SKU identifier              |
+| Variant Price | Price                       |
+| Option1 Value | Variant option              |
+| Image Src     | Public image URL (optional) |
 
 ### Example Row
 
@@ -87,34 +85,36 @@ coffee-mug, Coffee Mug, "<p>Nice mug</p>", Mugs, Brand A, kitchen, SKU001, 299, 
 
 ## ▶️ Running the Script
 
-### Import products:
+### 1️⃣ Basic command (actual import)
 
 ```bash
 python shopify_import.py products.xlsx
 ```
 
-### Import CSV:
+### 2️⃣ Run CSV file
 
 ```bash
 python shopify_import.py products.csv
 ```
 
-### Use specific Excel sheet:
+### 3️⃣ Use a specific Excel sheet
 
 ```bash
 python shopify_import.py products.xlsx --sheet Sheet1
 ```
 
-### Dry-run (no API calls):
+### 4️⃣ Dry-run (no API calls, preview only)
 
 ```bash
 python shopify_import.py products.xlsx --dry-run
 ```
 
-Example:
+### ✔️ Actual run after dry-run
 
-```
-[DRY-RUN] Would create product 'Coffee Mug' (coffee-mug) + image
+Use this command to perform the real Shopify import:
+
+```bash
+python shopify_import.py products.xlsx
 ```
 
 ---
@@ -123,27 +123,27 @@ Example:
 
 ### If product exists:
 
-* Updates title, description, tags, vendor, type
-* Matches variant using SKU
+* Updates title, body_html, vendor, productType, tags
+* Matches variant by SKU
 * Updates variant price
 * Uploads image only if new
 
-### If product does not exist:
+### If product does NOT exist:
 
-* Creates product shell
+* Creates a new product
 * Creates/updates variant
-* Uploads image
+* Uploads image if provided
 
-All variant updates use **productVariantsBulkUpdate**.
+Variant updates follow Shopify’s strict `productVariantsBulkUpdate` mutation.
 
 ---
 
 ## 🧠 Error Handling
 
-* Automatic exponential backoff on Shopify 429 errors
-* Retries on 500/502/503/504
-* Detects missing columns before execution
-* Row-level isolation (other rows continue):
+* Automatic exponential backoff on 429 rate limits
+* Shopify 500/502/503/504 retry logic
+* Detects missing columns before processing
+* Row-level failure isolation:
 
 ```
 Row 3 failed: productVariantsBulkUpdate errors: Invalid price
@@ -190,8 +190,6 @@ Python Developer • Shopify Automation • API Engineering
 
 ---
 
-## ⭐ If this project helped you, please give it a star!
+## ⭐ If this project helps you, please give it a star!
 
 ```
-
-
