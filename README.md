@@ -194,7 +194,4 @@ Python Developer • Shopify Automation • API Engineering
 
 ```
 
----
 
-Just copy the block above into your GitHub `README.md` — nothing else needed.
-```
