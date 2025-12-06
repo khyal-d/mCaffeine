@@ -6,6 +6,9 @@ A complete Python-based command-line tool that automates syncing Shopify product
 It supports product creation, updates, variant syncing, image uploads, rate-limit handling, and strict GraphQL mutation compliance.
 
 ---
+here is a doc link with video too!
+https://docs.google.com/document/d/1QEGw_08iqHRorwB1eSlxp2Wmy7IxVok2PXR57r3q3Vk/edit?usp=sharing
+---
 
 ## 🚀 Features
 
